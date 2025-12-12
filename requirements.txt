@@ -1,0 +1,7 @@
+# Essential Pelican dependencies
+pelican>=4.8.0
+markdown>=3.4.0
+
+# Essential tools
+invoke>=2.0.0
+watchdog>=2.1.0

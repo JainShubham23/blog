@@ -1,0 +1,83 @@
+/* Custom CSS for Elegant Theme */
+
+/* Enhanced typography for Elegant theme */
+body {
+    line-height: 1.8;
+}
+
+/* Code blocks styling for Elegant theme */
+pre, code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+pre {
+    padding: 1rem;
+    overflow-x: auto;
+    border-left: 4px solid #007acc;
+}
+
+code {
+    padding: 2px 6px;
+    font-size: 0.9em;
+}
+
+/* Elegant theme enhancements */
+.article-content h2 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+}
+
+/* Blockquotes */
+blockquote {
+    border-left: 4px solid #007acc;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    background-color: #f9f9f9;
+    padding: 1rem;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    width: 100%;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Links */
+a {
+    color: #007acc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .nav,
+    .footer {
+        display: none;
+    }
+    
+    .article-content {
+        max-width: 100%;
+    }
+}
