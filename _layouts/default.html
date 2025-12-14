@@ -12,9 +12,9 @@
   <nav class="nav">
     <a class="brand" href="/">{{ site.title }}</a>
     <div class="nav-links">
-      <a href="/about">About</a>
-      <a href="/experience">Experience</a>
-      <a href="/">Writing</a>
+      <a href="{{ '/' | relative_url }}">Writing</a>
+      <a href="{{ '/about' | relative_url }}">About</a>
+      <a href="{{ '/experience' | relative_url }}">Experience</a>
     </div>
   </nav>
 </header>
