@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather&display=swap');
+
+:root {
+  --bg: #fafafa;
+  --text: #1f2933;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Merriweather', serif;
+  line-height: 1.75;
+}
+
+/* Navigation */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.nav {
+  max-width: 900px;
+  margin: auto;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+.nav-links a {
+  margin-left: 1.5rem;
+  color: var(--muted);
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+/* Content */
+.content {
+  max-width: 720px;
+  margin: auto;
+  padding: 4rem 1.5rem;
+}
+
+/* Intro */
+.intro h1 {
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.25rem;
+}
+
+.intro p {
+  color: var(--muted);
+}
+
+/* Post list */
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 3rem;
+}
+
+.post-item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.post-date {
+  font-family: 'Inter', sans-serif;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.post-main h2 {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.post-main p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+/* Post page */
+.post-header {
+  margin-bottom: 3rem;
+}
+
+.post-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.site-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-bottom: 2rem;
+}
+
+/* Footer */
+.site-footer {
+    border-top: 1px solid var(--border);
+    background: #fff;
+    margin-top: 6rem;
+  }
+  
+  .footer-inner {
+    max-width: 900px;
+    margin: auto;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+  
+  .footer-brand {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-links {
+    margin-bottom: 1rem;
+  }
+  
+  .footer-links a {
+    margin: 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .footer-links a:hover {
+    color: var(--text);
+  }
+  
+  .footer-meta {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .site-footer {
+    box-shadow: 0 -1px 0 var(--border);
+  }
+    

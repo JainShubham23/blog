@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ page.title }} · {{ site.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="/">{{ site.title }}</a>
+    <div class="nav-links">
+      <a href="/about">About</a>
+      <a href="/experience">Experience</a>
+      <a href="/">Writing</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  {{ content }}
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">{{ site.title }}</p>
+  
+      <nav class="footer-links">
+        <a href="/">Writing</a>
+        <a href="/about">About</a>
+        <a href="/experience">Experience</a>
+        <a href="https://github.com/yourname">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © {{ site.time | date: "%Y" }} · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+---
+layout: default
+title: Writing
+---
+
+<section class="intro">
+  <h1>Writing</h1>
+  <p>Opinions about Design,Algorithms,Machine Learning, AI</p>
+</section>
+
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li class="post-item">
+      <span class="post-date">
+        {{ post.date | date: "%Y" }}
+      </span>
+
+      <div class="post-main">
+        <h2>
+          <a href="{{ post.url }}">{{ post.title }}</a>
+        </h2>
+        <p>{{ post.excerpt }}</p>
+      </div>
+    </li>
+  {% endfor %}
+</ul>
