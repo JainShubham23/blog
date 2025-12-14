@@ -1,8 +1,8 @@
 title: Shubham Jain
-description: Thoughts on code, design, and writing
+description: Writing, engineering, and ideas
 
-baseurl : "blog/"
-url: https://jainshubham23.github.io
+baseurl: "/blog"
+url: "https://jainshubham23.github.io"
 
 markdown: kramdown
 theme: null
