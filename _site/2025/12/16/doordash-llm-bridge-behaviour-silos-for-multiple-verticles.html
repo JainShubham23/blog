@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How DoorDash Uses LLMs to Bridge Behavioral Silos in Recommendations · Shubham Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/blog/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand">Shubham Jain</a>
+    <div class="nav-links">
+      <a href="/blog/">Writing</a>
+      <a href="/blog/tags.html">Tags</a>
+      <a href="/blog/about">About</a>
+      <a href="/blog/experience">Experience</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  <article class="post">
+
+  <header class="post-header">
+    <h1>How DoorDash Uses LLMs to Bridge Behavioral Silos in Recommendations</h1>
+    <p class="post-meta">
+      December 16, 2025
+    </p>
+    
+      <div class="post-tags">
+        
+          <a class="tag" href="/blog/tags/machine-learning/">
+            #machine-learning
+          </a>
+        
+          <a class="tag" href="/blog/tags/system-design/">
+            #system-design
+          </a>
+        
+      </div>
+    
+  </header>
+
+  <p>DoorDash recently published a great article on how they use <strong>Large Language Models (LLMs)</strong> to improve recommendations across multiple business verticals like restaurants, groceries, and retail. Instead of replacing traditional recommender systems, they use LLMs as a <strong>semantic bridge</strong> between otherwise disconnected user behaviors.</p>
+
+<blockquote>
+  <p><strong>Original article:</strong><br />
+https://careersatdoordash.com/blog/doordash-llms-bridge-behavioral-silos-in-multi-vertical-recommendations/</p>
+</blockquote>
+
+<p>This post is my detailed breakdown of what DoorDash is doing, why it matters, and what we can learn from it.</p>
+
+<hr />
+
+<h2 id="the-core-problem-behavioral-silos">The core problem: behavioral silos</h2>
+
+<p>DoorDash operates across multiple <strong>verticals</strong>:</p>
+<ul>
+  <li>Restaurant delivery</li>
+  <li>Grocery delivery</li>
+  <li>Convenience and retail</li>
+</ul>
+
+<p>A major challenge is that <strong>user behavior does not transfer cleanly across these verticals</strong>.</p>
+
+<p>For example:</p>
+<ul>
+  <li>A user may order restaurant food frequently</li>
+  <li>But have little or no grocery order history</li>
+  <li>Or their grocery behavior may look completely different</li>
+</ul>
+
+<p>Traditional recommender systems rely heavily on <strong>historical interaction signals</strong> (clicks, orders, ratings). When users haven’t interacted with a vertical, these systems struggle with:</p>
+<ul>
+  <li>Cold start</li>
+  <li>Sparse data</li>
+  <li>Poor cross-vertical generalization</li>
+</ul>
+
+<p>This creates <em>behavioral silos</em> where each vertical operates almost independently.</p>
+
+<hr />
+
+<h2 id="why-traditional-recommenders-fall-short">Why traditional recommenders fall short</h2>
+
+<p>Classic recommendation pipelines typically look like this:</p>
+
+<ol>
+  <li>Candidate retrieval (based on past behavior)</li>
+  <li>Ranking (using learned relevance models)</li>
+  <li>Post-processing (business rules, diversity, etc.)</li>
+</ol>
+
+<p>These models work well <strong>within a single domain</strong>, but fail when:</p>
+<ul>
+  <li>User intent must transfer across domains</li>
+  <li>Behavioral signals are sparse or indirect</li>
+  <li>Item vocabularies differ significantly</li>
+</ul>
+
+<p>Ordering sushi doesn’t obviously map to buying groceries — at least not in a way traditional models can easily encode.</p>
+
+<hr />
+
+<h2 id="doordashs-key-insight-model-intent-not-actions">DoorDash’s key insight: model intent, not actions</h2>
+
+<p>Instead of focusing purely on <em>what</em> users did, DoorDash focuses on <em>why</em> they did it.</p>
+
+<p>This is where LLMs come in.</p>
+
+<p>LLMs can:</p>
+<ul>
+  <li>Understand user behavior at a <strong>semantic level</strong></li>
+  <li>Encode patterns like preferences, routines, and intent</li>
+  <li>Generalize across different item types and vocabularies</li>
+</ul>
+
+<p>For example:</p>
+<ul>
+  <li>Frequent late-night food orders</li>
+  <li>Consistent healthy meal choices</li>
+  <li>Large family-sized orders on weekends</li>
+</ul>
+
+<p>These patterns can be expressed as <strong>high-level intent signals</strong>, which transfer more naturally across verticals.</p>
+
+<hr />
+
+<h2 id="how-llms-are-used-high-level-architecture">How LLMs are used (high-level architecture)</h2>
+
+<p>Importantly, DoorDash does <strong>not</strong> use LLMs as an end-to-end recommender.</p>
+
+<p>Instead, LLMs act as an <strong>augmentation layer</strong>:</p>
+
+<ol>
+  <li><strong>Input signals</strong>
+    <ul>
+      <li>User behavior (orders, searches, browsing)</li>
+      <li>Context (time, location, device)</li>
+      <li>Item metadata</li>
+    </ul>
+  </li>
+  <li><strong>LLM-based representation</strong>
+    <ul>
+      <li>Generate rich semantic embeddings or features</li>
+      <li>Capture cross-domain intent</li>
+      <li>Reduce sparsity</li>
+    </ul>
+  </li>
+  <li><strong>Downstream recommendation models</strong>
+    <ul>
+      <li>Retrieval models</li>
+      <li>Ranking models</li>
+      <li>Business logic</li>
+    </ul>
+  </li>
+</ol>
+
+<p>The final recommendations are still produced by <strong>traditional scalable ML systems</strong>, but with better features.</p>
+
+<hr />
+
+<h2 id="bridging-verticals-with-shared-representations">Bridging verticals with shared representations</h2>
+
+<p>The most interesting part is how LLMs help create <strong>shared representations</strong> across verticals.</p>
+
+<p>Instead of learning separate user models for:</p>
+<ul>
+  <li>Restaurants</li>
+  <li>Groceries</li>
+  <li>Retail</li>
+</ul>
+
+<p>DoorDash can:</p>
+<ul>
+  <li>Represent user intent in a unified embedding space</li>
+  <li>Allow signals from one vertical to inform another</li>
+  <li>Improve recommendations even when direct interaction data is missing</li>
+</ul>
+
+<p>This significantly improves:</p>
+<ul>
+  <li>Cold-start performance</li>
+  <li>Cross-sell opportunities</li>
+  <li>Overall recommendation relevance</li>
+</ul>
+
+<hr />
+
+<h2 id="why-this-approach-works-in-production">Why this approach works in production</h2>
+
+<p>Several aspects make this approach practical:</p>
+
+<ul>
+  <li>
+    <p><strong>LLMs are not in the critical serving path</strong><br />
+They enrich features, not handle real-time ranking.</p>
+  </li>
+  <li>
+    <p><strong>Scalability is preserved</strong><br />
+Existing retrieval and ranking systems remain intact.</p>
+  </li>
+  <li>
+    <p><strong>Risk is controlled</strong><br />
+If LLM features degrade, the system falls back to traditional signals.</p>
+  </li>
+  <li>
+    <p><strong>Interpretability improves</strong><br />
+High-level intent features are easier to reason about than raw clicks.</p>
+  </li>
+</ul>
+
+<p>This is a great example of <strong>incremental LLM adoption</strong> rather than a full rewrite.</p>
+
+<hr />
+
+<h2 id="key-takeaways">Key takeaways</h2>
+
+<ol>
+  <li>LLMs shine at <strong>semantic understanding</strong>, not brute-force ranking</li>
+  <li>Modeling <strong>intent</strong> is more transferable than modeling <strong>actions</strong></li>
+  <li>LLMs work best when paired with classical recommender systems</li>
+  <li>Cross-domain recommendation is a natural fit for language models</li>
+  <li>Production ML systems benefit most from <em>hybrid architectures</em></li>
+</ol>
+
+<hr />
+
+<h2 id="why-this-matters-beyond-doordash">Why this matters beyond DoorDash</h2>
+
+<p>This pattern applies to many domains:</p>
+<ul>
+  <li>Job marketplaces (job search vs applications)</li>
+  <li>E-commerce (browsing vs purchasing)</li>
+  <li>Media platforms (reading vs watching)</li>
+  <li>Fintech (transactions vs intent)</li>
+</ul>
+
+<p>Anywhere behavior is fragmented across domains, <strong>LLMs can act as the connective tissue</strong>.</p>
+
+<hr />
+
+<h2 id="final-thoughts">Final thoughts</h2>
+
+<p>What makes this DoorDash article compelling is its pragmatism. LLMs are not presented as magic replacements, but as <strong>tools that complement existing systems</strong> by solving a very specific problem: bridging behavioral silos.</p>
+
+<p>This is a strong blueprint for how LLMs should be introduced into mature ML systems — carefully, incrementally, and where they add the most value.</p>
+
+<hr />
+
+<p><strong>Original article:</strong><br />
+https://careersatdoordash.com/blog/doordash-llms-bridge-behavioral-silos-in-multi-vertical-recommendations/</p>
+
+
+</article>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Shubham Jain</p>
+  
+      <nav class="footer-links">
+        <a href="/blog/about">About</a>
+        <a href="https://www.linkedin.com/in/shubham-jain2310/">LinkedIn</a>
+        <a href="https://github.com/jainshubham23">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © 2025 · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 ---
 layout: post
 title: How DoorDash Uses LLMs to Bridge Behavioral Silos in Recommendations
+tags: [machine-learning]
+
 ---
 
 DoorDash recently published a great article on how they use **Large Language Models (LLMs)** to improve recommendations across multiple business verticals like restaurants, groceries, and retail. Instead of replacing traditional recommender systems, they use LLMs as a **semantic bridge** between otherwise disconnected user behaviors.
