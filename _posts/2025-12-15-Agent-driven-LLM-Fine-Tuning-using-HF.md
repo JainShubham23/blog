@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Trying Agent-Driven LLM Fine-Tuning with Hugging Face Skills
+tags: [machine-learning]
 ---
 
 I recently tried out Hugging Face’s new **Skills-based fine-tuning workflow**, where a coding agent (like Claude Code) doesn’t just *write* training scripts, but actually **runs end-to-end model training jobs** on Hugging Face infrastructure. The experience was surprisingly smooth and changed how I think about fine-tuning large language models.
