@@ -1,4 +1,9 @@
-## Summary: Building the Intent Engine at Instacart
+---
+layout: post
+title: How Instacart is using LLM'S for queries
+date: 2025-12-18
+tags: [machine-learning]
+---
 
 I recently read a deep engineering blog from Instacart that explains how they rebuilt their **query understanding system** using **large language models (LLMs)** to improve search across millions of users. The core challenge they were solving was understanding what users *mean*, not just what they type — especially for ambiguous, noisy, or long-tail queries.
 
