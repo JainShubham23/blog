@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Consensus Algorithms, How Distributed Systems Agree in the Presence of Failure
-date: 2025-12-20
+date: 2025-12-21
 tags: [system-design]
 ---
 
