@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How Instacart is using LLM'S for queries · Shubham Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/blog/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand">Shubham Jain</a>
+    <div class="nav-links">
+      <a href="/blog/">Stories</a>
+      <a href="/blog/tags.html">Tags</a>
+      <a href="/blog/about">About</a>
+      <a href="/blog/experience">Experience</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  <article class="post">
+
+  <header class="post-header">
+    <h1>How Instacart is using LLM'S for queries</h1>
+    <p class="post-meta">
+      December 18, 2025
+    </p>
+    
+      <div class="post-tags">
+        
+          <a class="tag" href="/blog/tags/machine-learning/">
+            #machine-learning
+          </a>
+        
+      </div>
+    
+  </header>
+
+  <p>I recently read a deep engineering blog from Instacart that explains how they rebuilt their <strong>query understanding system</strong> using <strong>large language models (LLMs)</strong> to improve search across millions of users. The core challenge they were solving was understanding what users <em>mean</em>, not just what they type — especially for ambiguous, noisy, or long-tail queries.</p>
+
+<p>Instacart’s legacy query understanding stack relied on many task-specific ML models (classification, rewriting, entity extraction, etc.). This approach struggled with sparse training data, long-tail queries, and system complexity. Because search happens before conversion, high-quality labeled data was limited, and maintaining many independent models slowed iteration and increased operational overhead.</p>
+
+<hr />
+
+<h3 id="why-llms-made-sense">Why LLMs Made Sense</h3>
+
+<p>LLMs offered several advantages:</p>
+<ul>
+  <li>Strong general language understanding and world knowledge</li>
+  <li>Better handling of ambiguity and rare queries</li>
+  <li>The ability to consolidate multiple query understanding tasks into a single backbone</li>
+  <li>Reduced feature engineering and faster iteration cycles</li>
+</ul>
+
+<p>Instead of treating LLMs as a drop-in replacement, Instacart designed a <strong>layered strategy</strong> to make them reliable and scalable in production.</p>
+
+<hr />
+
+<h3 id="the-intent-engine-architecture">The Intent Engine Architecture</h3>
+
+<p>Instacart’s Intent Engine is built around three progressively more specialized techniques:</p>
+
+<h4 id="1-context-engineering-rag">1. Context Engineering (RAG)</h4>
+<p>Rather than relying on raw prompting, Instacart injects domain-specific context into prompts. This includes product catalog signals, popular conversions, and taxonomy information. This grounds the LLM’s outputs in Instacart’s business reality instead of generic language patterns.</p>
+
+<h4 id="2-guardrails-and-post-processing">2. Guardrails and Post-Processing</h4>
+<p>LLM outputs are validated against structured constraints like category hierarchies and allowed attributes. This step reduces hallucinations and ensures the model’s predictions align with Instacart’s internal schemas.</p>
+
+<h4 id="3-fine-tuning">3. Fine-Tuning</h4>
+<p>For tasks that require deep domain expertise and low latency, Instacart fine-tunes smaller models using proprietary data. This moves domain knowledge from prompts into the model weights themselves, improving consistency and efficiency at scale.</p>
+
+<p>This progression reflects a spectrum from general-purpose prompting to fully specialized models.</p>
+
+<hr />
+
+<h3 id="how-the-system-is-used">How the System Is Used</h3>
+
+<h4 id="query-category-classification">Query Category Classification</h4>
+<p>Instacart maintains a large hierarchical product taxonomy. The new system retrieves candidate categories based on historical signals and uses an LLM to rerank them. Additional semantic filtering removes irrelevant results, leading to better precision and recall compared to legacy classifiers.</p>
+
+<h4 id="query-rewriting">Query Rewriting</h4>
+<p>Query rewrites improve recall by generating alternate expressions of user intent. Instacart uses specialized prompts for different rewrite types, such as broader queries, substitutes, and synonyms. Outputs are filtered to ensure semantic relevance and correctness. This structured approach significantly improves coverage while maintaining high precision.</p>
+
+<h4 id="semantic-role-labeling-srl">Semantic Role Labeling (SRL)</h4>
+<p>SRL extracts structured information from queries, such as product type, brand, and attributes. Instacart uses a hybrid system:</p>
+<ul>
+  <li>An offline pipeline generates high-quality annotations for common queries and caches the results.</li>
+  <li>A lightweight, fine-tuned model handles real-time inference for long-tail queries.</li>
+</ul>
+
+<p>The offline pipeline also generates training data for the real-time model, allowing it to approximate the quality of larger models at a fraction of the cost.</p>
+
+<hr />
+
+<h3 id="production-engineering-and-scale">Production Engineering and Scale</h3>
+
+<p>Running LLMs in real time required careful optimization:</p>
+<ul>
+  <li>Adapter merging and hardware upgrades reduced latency significantly</li>
+  <li>Caching handled the majority of high-frequency queries</li>
+  <li>Autoscaling helped control GPU costs during off-peak traffic</li>
+  <li>Accuracy was prioritized over aggressive quantization when tradeoffs emerged</li>
+</ul>
+
+<p>The system improved search quality for rare queries, reduced user friction, and significantly lowered search-related complaints.</p>
+
+<hr />
+
+<h3 id="key-takeaways">Key Takeaways</h3>
+
+<ul>
+  <li>Domain-specific context is more valuable than raw model size</li>
+  <li>Offline pipelines are effective for bootstrapping data and reducing online costs</li>
+  <li>LLMs can replace many narrow ML models when paired with guardrails</li>
+  <li>Production success depends as much on systems engineering as model quality</li>
+</ul>
+
+<p>Overall, this post is a strong example of how LLMs can be thoughtfully integrated into a real-world, high-traffic system by balancing accuracy, cost, latency, and maintainability.</p>
+
+<p><strong>Original article:</strong><br />
+https://tech.instacart.com/building-the-intent-engine-how-instacart-is-revamping-query-understanding-with-llms-3ac8051ae7ac</p>
+
+
+</article>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Shubham Jain</p>
+  
+      <nav class="footer-links">
+        <a href="/blog/about">About</a>
+        <a href="https://www.linkedin.com/in/shubham-jain2310/">LinkedIn</a>
+        <a href="https://github.com/jainshubham23">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © 2025 · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>

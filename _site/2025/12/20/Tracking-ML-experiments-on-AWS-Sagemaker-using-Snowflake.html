@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tracking ML Experiments with MLflow on SageMaker Using Snowflake · Shubham Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/blog/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand">Shubham Jain</a>
+    <div class="nav-links">
+      <a href="/blog/">Stories</a>
+      <a href="/blog/tags.html">Tags</a>
+      <a href="/blog/about">About</a>
+      <a href="/blog/experience">Experience</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  <article class="post">
+
+  <header class="post-header">
+    <h1>Tracking ML Experiments with MLflow on SageMaker Using Snowflake</h1>
+    <p class="post-meta">
+      December 20, 2025
+    </p>
+    
+      <div class="post-tags">
+        
+          <a class="tag" href="/blog/tags/machine-learning/">
+            #machine-learning
+          </a>
+        
+      </div>
+    
+  </header>
+
+  <p>This AWS Machine Learning blog explains how to build a <strong>unified experiment tracking workflow</strong> by integrating <strong>MLflow</strong>, <strong>Amazon SageMaker</strong>, and <strong>Snowflake</strong>. The core problem it addresses is a common one in modern ML systems: data processing and feature engineering often happen inside a data warehouse (Snowflake), while model training and lifecycle management live elsewhere (SageMaker). This split makes experiment tracking and reproducibility harder.</p>
+
+<hr />
+
+<h3 id="problem-being-solved">Problem Being Solved</h3>
+
+<p>In many real-world ML setups:</p>
+<ul>
+  <li>Features are engineered in <strong>Snowflake</strong></li>
+  <li>Models are trained in <strong>SageMaker</strong></li>
+  <li>Experiment metadata gets fragmented across systems</li>
+</ul>
+
+<p>Without a centralized tracking layer, it becomes difficult to:</p>
+<ul>
+  <li>Compare experiments</li>
+  <li>Reproduce results</li>
+  <li>Collaborate across teams</li>
+  <li>Govern models consistently</li>
+</ul>
+
+<hr />
+
+<h3 id="key-idea">Key Idea</h3>
+
+<p>Use <strong>Amazon SageMaker Managed MLflow</strong> as the <strong>central experiment tracking system</strong>, while continuing to use <strong>Snowflake (via Snowpark)</strong> for data processing and feature engineering.</p>
+
+<p>MLflow becomes the single source of truth for:</p>
+<ul>
+  <li>Parameters and hyperparameters</li>
+  <li>Metrics</li>
+  <li>Model artifacts</li>
+  <li>Experiment metadata</li>
+</ul>
+
+<hr />
+
+<h3 id="architecture-overview">Architecture Overview</h3>
+
+<ul>
+  <li><strong>Snowflake + Snowpark</strong>
+    <ul>
+      <li>Handles data preparation and feature engineering inside the data warehouse</li>
+      <li>Executes ML code using Snowpark notebooks</li>
+    </ul>
+  </li>
+  <li><strong>Amazon SageMaker Managed MLflow</strong>
+    <ul>
+      <li>Hosts the MLflow tracking server</li>
+      <li>Stores experiment runs, metrics, and artifacts</li>
+      <li>Eliminates the need to self-manage MLflow infrastructure</li>
+    </ul>
+  </li>
+  <li><strong>MLflow Client</strong>
+    <ul>
+      <li>Configured in the Snowflake/Snowpark environment</li>
+      <li>Logs experiments directly to the SageMaker-managed MLflow endpoint</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="workflow">Workflow</h3>
+
+<ol>
+  <li>Set up <strong>SageMaker Studio</strong> and enable <strong>Managed MLflow</strong></li>
+  <li>Configure Snowflake and Snowpark for Python</li>
+  <li>Install required MLflow and SageMaker libraries</li>
+  <li>Set the MLflow tracking URI to the SageMaker MLflow endpoint</li>
+  <li>Run experiments from Snowflake:
+    <ul>
+      <li>Log parameters (e.g., train/test split, model type)</li>
+      <li>Log metrics (accuracy, loss, etc.)</li>
+      <li>Log trained model artifacts</li>
+    </ul>
+  </li>
+  <li>View and compare runs in the MLflow UI within SageMaker Studio</li>
+</ol>
+
+<hr />
+
+<h3 id="why-this-matters">Why This Matters</h3>
+
+<ul>
+  <li>
+    <p><strong>Centralized Experiment Tracking</strong><br />
+Even when training and feature engineering happen outside SageMaker, all experiments are tracked in one place.</p>
+  </li>
+  <li>
+    <p><strong>Reproducibility</strong><br />
+Parameters, data context, and artifacts are logged consistently across runs.</p>
+  </li>
+  <li>
+    <p><strong>Separation of Concerns</strong><br />
+Data teams can stay in Snowflake, ML teams can stay in SageMaker, without breaking the ML lifecycle.</p>
+  </li>
+  <li>
+    <p><strong>Reduced Operational Overhead</strong><br />
+Using SageMaker’s managed MLflow avoids running and maintaining your own tracking server.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="key-takeaways">Key Takeaways</h3>
+
+<ul>
+  <li>MLflow works well as a <strong>cross-platform experiment tracking layer</strong></li>
+  <li>Managed MLflow on SageMaker simplifies infrastructure and governance</li>
+  <li>Snowflake + Snowpark can participate fully in ML workflows, not just data prep</li>
+  <li>This pattern is useful for teams with <strong>warehouse-centric ML pipelines</strong></li>
+</ul>
+
+<hr />
+
+<p><strong>Original article:</strong><br />
+https://aws.amazon.com/blogs/machine-learning/track-machine-learning-experiments-with-mlflow-on-amazon-sagemaker-using-snowflake-integration/</p>
+
+
+</article>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Shubham Jain</p>
+  
+      <nav class="footer-links">
+        <a href="/blog/about">About</a>
+        <a href="https://www.linkedin.com/in/shubham-jain2310/">LinkedIn</a>
+        <a href="https://github.com/jainshubham23">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © 2025 · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>

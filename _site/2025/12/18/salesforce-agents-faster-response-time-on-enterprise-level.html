@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How Salesforce Agentforce Achieved 3–5× Faster Response Times at Enterprise Scale · Shubham Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/blog/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand">Shubham Jain</a>
+    <div class="nav-links">
+      <a href="/blog/">Stories</a>
+      <a href="/blog/tags.html">Tags</a>
+      <a href="/blog/about">About</a>
+      <a href="/blog/experience">Experience</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  <article class="post">
+
+  <header class="post-header">
+    <h1>How Salesforce Agentforce Achieved 3–5× Faster Response Times at Enterprise Scale</h1>
+    <p class="post-meta">
+      December 18, 2025
+    </p>
+    
+      <div class="post-tags">
+        
+          <a class="tag" href="/blog/tags/system-design/">
+            #system-design
+          </a>
+        
+          <a class="tag" href="/blog/tags/llm/">
+            #llm
+          </a>
+        
+          <a class="tag" href="/blog/tags/conversational-ai/">
+            #conversational-ai
+          </a>
+        
+          <a class="tag" href="/blog/tags/cloud-architecture/">
+            #cloud-architecture
+          </a>
+        
+          <a class="tag" href="/blog/tags/ml-in-production/">
+            #ml-in-production
+          </a>
+        
+      </div>
+    
+  </header>
+
+  <p>Building conversational AI systems at enterprise scale is less about model quality and more about <strong>system design, latency control, and architectural discipline</strong>. Salesforce’s recent engineering post on <strong>Agentforce</strong> is a strong example of how real-world constraints shape production LLM systems.</p>
+
+<blockquote>
+  <p><strong>Original Salesforce Engineering article:</strong><br />
+https://engineering.salesforce.com/how-agentforce-achieved-3-5x-faster-response-times-while-solving-enterprise-scale-architectural-complexity/</p>
+</blockquote>
+
+<p>This post breaks down the architectural decisions, trade-offs, and lessons from that article.</p>
+
+<hr />
+
+<h2 id="the-problem-conversational-ai-at-enterprise-scale">The problem: conversational AI at enterprise scale</h2>
+
+<p>Salesforce’s Forward Deployed Engineering (FDE) team was tasked with launching a production-ready conversational agent for a large, multi-brand retail enterprise.</p>
+
+<p>The system needed to:</p>
+<ul>
+  <li>Handle high traffic and strict latency requirements</li>
+  <li>Integrate with deeply nested enterprise order data</li>
+  <li>Support multiple brands with different workflows and tones</li>
+  <li>Scale reliably while remaining maintainable</li>
+</ul>
+
+<p>Early prototypes worked — but <strong>did not scale well</strong>.</p>
+
+<hr />
+
+<h2 id="early-mistake-overloading-the-llm">Early mistake: overloading the LLM</h2>
+
+<p>In initial versions, the system relied heavily on the LLM for:</p>
+<ul>
+  <li>Parsing structured order data</li>
+  <li>Applying business rules</li>
+  <li>Making hierarchical decisions</li>
+  <li>Formatting structured outputs</li>
+</ul>
+
+<p>This caused problems:</p>
+<ul>
+  <li>Small prompt changes produced inconsistent outputs</li>
+  <li>Deeply nested JSON increased failure rates</li>
+  <li>Debugging became difficult</li>
+  <li>Latency increased due to repeated reasoning loops</li>
+</ul>
+
+<h3 id="key-realization">Key realization</h3>
+
+<blockquote>
+  <p><strong>LLMs are probabilistic — business rules are not.</strong></p>
+</blockquote>
+
+<hr />
+
+<h2 id="separating-responsibilities-llm-vs-deterministic-code">Separating responsibilities: LLM vs deterministic code</h2>
+
+<p>To fix this, the team:</p>
+<ul>
+  <li>Moved deterministic logic into <strong>Apex code</strong> (Salesforce’s backend language)</li>
+  <li>Simplified LLM prompts to focus on reasoning and language</li>
+  <li>Used traditional code for validation, branching, and formatting</li>
+</ul>
+
+<p>This separation:</p>
+<ul>
+  <li>Improved reliability</li>
+  <li>Reduced prompt complexity</li>
+  <li>Made behavior predictable</li>
+  <li>Simplified debugging and testing</li>
+</ul>
+
+<p>This mirrors a broader best practice in production LLM systems:</p>
+<blockquote>
+  <p>Use LLMs for <em>understanding and generation</em>, not control flow.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="latency-bottlenecks-in-the-system">Latency bottlenecks in the system</h2>
+
+<p>Even after stabilizing behavior, <strong>latency remained a major issue</strong>.</p>
+
+<p>The main contributors were:</p>
+<ol>
+  <li>Slow upstream order APIs</li>
+  <li>Inefficient Data 360 queries across large datasets</li>
+  <li>Multiple sequential LLM calls in a single request path</li>
+</ol>
+
+<p>Each added tens or hundreds of milliseconds, compounding end-to-end response time.</p>
+
+<hr />
+
+<h2 id="performance-optimization-fewer-calls-better-data-access">Performance optimization: fewer calls, better data access</h2>
+
+<p>The team made two critical optimizations.</p>
+
+<h3 id="1-consolidating-llm-calls">1. Consolidating LLM calls</h3>
+
+<p>Instead of multiple reasoning steps:</p>
+<ul>
+  <li>Prompts were redesigned to handle more reasoning in <strong>a single LLM call</strong></li>
+  <li>Responsibilities were clearly scoped</li>
+  <li>Intermediate back-and-forth with the model was removed</li>
+</ul>
+
+<p>This significantly reduced latency and variance.</p>
+
+<hr />
+
+<h3 id="2-optimizing-data-retrieval">2. Optimizing data retrieval</h3>
+
+<p>Data 360 lookups were redesigned to:</p>
+<ul>
+  <li>Fetch all required fields in a single request</li>
+  <li>Avoid repeated queries</li>
+  <li>Reduce serialization overhead</li>
+</ul>
+
+<p>This eliminated unnecessary round trips and improved overall responsiveness.</p>
+
+<hr />
+
+<h2 id="result-35-faster-response-times">Result: 3–5× faster response times</h2>
+
+<p>Together, these changes reduced end-to-end latency by approximately <strong>75%</strong>, enabling:</p>
+<ul>
+  <li>Real-time conversational experiences</li>
+  <li>Production-grade reliability</li>
+  <li>Better user satisfaction</li>
+</ul>
+
+<p>Most importantly, performance improvements came from <strong>architecture</strong>, not better models.</p>
+
+<hr />
+
+<h2 id="scaling-to-multiple-brands">Scaling to multiple brands</h2>
+
+<p>Once the system worked for one brand, the next challenge was scaling.</p>
+
+<p>Two approaches were considered:</p>
+<ol>
+  <li>A single unified agent for all brands</li>
+  <li>Separate agents per brand</li>
+</ol>
+
+<p>The team chose <strong>brand-specific agents</strong> built on a shared architectural foundation.</p>
+
+<h3 id="why-this-worked">Why this worked</h3>
+<ul>
+  <li>Each brand could customize tone and workflows</li>
+  <li>Changes could be rolled out independently</li>
+  <li>Core infrastructure and patterns were reused</li>
+  <li>New agents were delivered ~5× faster</li>
+</ul>
+
+<p>This balanced <strong>reuse with flexibility</strong>, a classic enterprise design challenge.</p>
+
+<hr />
+
+<h2 id="key-system-design-lessons">Key system design lessons</h2>
+
+<p>This article highlights several important principles for production LLM systems:</p>
+
+<ul>
+  <li>Don’t embed deterministic logic inside prompts</li>
+  <li>Reduce the number of LLM calls in latency-sensitive paths</li>
+  <li>Optimize data access before touching the model</li>
+  <li>Treat LLMs as one component, not the system</li>
+  <li>Modular architectures scale better than monoliths</li>
+</ul>
+
+<hr />
+
+<h2 id="why-this-matters">Why this matters</h2>
+
+<p>As more companies deploy conversational AI:</p>
+<ul>
+  <li>Latency becomes a UX issue</li>
+  <li>Reliability becomes a trust issue</li>
+  <li>Architecture becomes the differentiator</li>
+</ul>
+
+<p>The Agentforce story shows that <strong>successful LLM systems look more like distributed systems than demos</strong>.</p>
+
+<hr />
+
+<h2 id="final-thoughts">Final thoughts</h2>
+
+<p>Salesforce’s Agentforce journey is a strong reminder that:</p>
+<blockquote>
+  <p>Scaling AI is a systems problem first, and a model problem second.</p>
+</blockquote>
+
+<p>This article is a valuable blueprint for anyone building enterprise-grade conversational systems that must be fast, reliable, and extensible.</p>
+
+<hr />
+
+<p><strong>Original article:</strong><br />
+https://engineering.salesforce.com/how-agentforce-achieved-3-5x-faster-response-times-while-solving-enterprise-scale-architectural-complexity/</p>
+
+
+</article>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Shubham Jain</p>
+  
+      <nav class="footer-links">
+        <a href="/blog/about">About</a>
+        <a href="https://www.linkedin.com/in/shubham-jain2310/">LinkedIn</a>
+        <a href="https://github.com/jainshubham23">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © 2025 · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>

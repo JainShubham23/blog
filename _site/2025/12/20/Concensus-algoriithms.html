@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Consensus Algorithms, How Distributed Systems Agree in the Presence of Failure · Shubham Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/blog/assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand">Shubham Jain</a>
+    <div class="nav-links">
+      <a href="/blog/">Stories</a>
+      <a href="/blog/tags.html">Tags</a>
+      <a href="/blog/about">About</a>
+      <a href="/blog/experience">Experience</a>
+    </div>
+  </nav>
+</header>
+
+<main class="content">
+  <article class="post">
+
+  <header class="post-header">
+    <h1>Consensus Algorithms, How Distributed Systems Agree in the Presence of Failure</h1>
+    <p class="post-meta">
+      December 20, 2025
+    </p>
+    
+      <div class="post-tags">
+        
+          <a class="tag" href="/blog/tags/system-design/">
+            #system-design
+          </a>
+        
+      </div>
+    
+  </header>
+
+  <p>Distributed systems are fundamentally about <strong>coordination under uncertainty</strong>. Machines fail, networks partition, clocks drift, and messages arrive late—or never. Yet systems like Kubernetes, distributed databases, and cloud platforms must still <strong>agree on critical decisions</strong>.</p>
+
+<p>This is where <strong>consensus algorithms</strong> come in.</p>
+
+<p>In this article, we cover:</p>
+<ul>
+  <li>What consensus is and why it’s hard</li>
+  <li>Core guarantees provided by consensus</li>
+  <li>Failure models and assumptions</li>
+  <li>Major consensus algorithms (Paxos, Raft)</li>
+  <li>How consensus is used in real systems</li>
+  <li>Practical tradeoffs engineers make</li>
+</ul>
+
+<hr />
+
+<h2 id="what-is-consensus">What Is Consensus?</h2>
+
+<p><strong>Consensus</strong> is the problem of getting a group of distributed nodes to <strong>agree on a single value or sequence of values</strong>, even in the presence of failures.</p>
+
+<p>Systems need consensus to agree on:</p>
+<ul>
+  <li>Who the <strong>leader</strong> is</li>
+  <li>The <strong>order of operations</strong> in a log</li>
+  <li>Whether a transaction is <strong>committed</strong></li>
+  <li>The current <strong>cluster configuration</strong></li>
+</ul>
+
+<blockquote>
+  <p>Consensus enables reliable replicated state machines on unreliable infrastructure.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="why-is-consensus-hard">Why Is Consensus Hard?</h2>
+
+<p>Consensus is difficult due to fundamental properties of distributed systems.</p>
+
+<h3 id="1-no-shared-memory">1. No Shared Memory</h3>
+<p>Nodes communicate only through message passing. Messages can be:</p>
+<ul>
+  <li>Delayed</li>
+  <li>Reordered</li>
+  <li>Duplicated</li>
+  <li>Lost</li>
+</ul>
+
+<h3 id="2-partial-failures">2. Partial Failures</h3>
+<p>Some nodes may fail while others continue running. The system cannot easily distinguish between:</p>
+<ul>
+  <li>A slow node</li>
+  <li>A dead node</li>
+</ul>
+
+<h3 id="3-no-perfect-clocks">3. No Perfect Clocks</h3>
+<p>Clock skew and drift prevent reliable global ordering based on timestamps alone.</p>
+
+<h3 id="4-flp-impossibility-result">4. FLP Impossibility Result</h3>
+<p>The <strong>FLP theorem</strong> proves that in a fully asynchronous system with even one faulty process, deterministic consensus cannot guarantee termination.</p>
+
+<p><strong>Practical implication</strong>: Real systems rely on timeouts, retries, and assumptions about eventual stability.</p>
+
+<hr />
+
+<h2 id="core-properties-of-consensus">Core Properties of Consensus</h2>
+
+<p>A correct consensus algorithm guarantees:</p>
+
+<h3 id="safety-never-wrong">Safety (Never Wrong)</h3>
+<ul>
+  <li>Nodes never decide different values</li>
+  <li>Once a value is chosen, it is final</li>
+</ul>
+
+<h3 id="liveness-eventually-progress">Liveness (Eventually Progress)</h3>
+<ul>
+  <li>The system eventually reaches a decision (under reasonable conditions)</li>
+</ul>
+
+<h3 id="agreement">Agreement</h3>
+<ul>
+  <li>All non-faulty nodes decide on the same value</li>
+</ul>
+
+<h3 id="validity">Validity</h3>
+<ul>
+  <li>The decided value must be one that was proposed</li>
+</ul>
+
+<blockquote>
+  <p>Safety is absolute. Liveness is conditional.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="failure-models">Failure Models</h2>
+
+<p>Most production consensus systems assume:</p>
+<ul>
+  <li><strong>Crash-stop failures</strong>: nodes stop permanently</li>
+  <li><strong>Crash-recovery failures</strong>: nodes restart and rejoin</li>
+  <li><strong>Non-Byzantine behavior</strong>: nodes are not malicious</li>
+</ul>
+
+<p>Byzantine fault tolerance exists but is significantly more complex and costly.</p>
+
+<hr />
+
+<h2 id="consensus-as-replicated-state-machines">Consensus as Replicated State Machines</h2>
+
+<p>Modern systems use consensus to replicate a <strong>log of commands</strong>:</p>
+
+<ol>
+  <li>Clients send commands to a leader</li>
+  <li>Commands are appended to a log</li>
+  <li>Consensus ensures the log is replicated consistently</li>
+  <li>Each node applies commands in order</li>
+</ol>
+
+<p>This is known as <strong>State Machine Replication (SMR)</strong>.</p>
+
+<hr />
+
+<h2 id="paxos-the-foundation">Paxos: The Foundation</h2>
+
+<h3 id="overview">Overview</h3>
+<p>Paxos is a family of algorithms that solve consensus with strong theoretical guarantees. It is:</p>
+<ul>
+  <li>Provably correct</li>
+  <li>Extremely subtle</li>
+  <li>Difficult to implement</li>
+</ul>
+
+<h3 id="roles">Roles</h3>
+<ul>
+  <li><strong>Proposers</strong>: suggest values</li>
+  <li><strong>Acceptors</strong>: vote on proposals</li>
+  <li><strong>Learners</strong>: learn the chosen value</li>
+</ul>
+
+<h3 id="phases">Phases</h3>
+<ol>
+  <li><strong>Prepare phase</strong>: proposer asks acceptors to promise</li>
+  <li><strong>Accept phase</strong>: acceptors vote on a value</li>
+</ol>
+
+<p>A value is chosen once a <strong>quorum (majority)</strong> agrees.</p>
+
+<h3 id="why-paxos-is-rarely-used-directly">Why Paxos Is Rarely Used Directly</h3>
+<ul>
+  <li>Hard to reason about</li>
+  <li>Difficult to extend</li>
+  <li>Easy to implement incorrectly</li>
+</ul>
+
+<hr />
+
+<h2 id="raft-consensus-for-practitioners">Raft: Consensus for Practitioners</h2>
+
+<p>Raft was designed to make consensus:</p>
+<ul>
+  <li>Easier to understand</li>
+  <li>Easier to implement</li>
+  <li>Easier to reason about operationally</li>
+</ul>
+
+<p>Raft breaks consensus into:</p>
+<ul>
+  <li>Leader election</li>
+  <li>Log replication</li>
+  <li>Safety guarantees</li>
+</ul>
+
+<hr />
+
+<h2 id="raft-architecture">Raft Architecture</h2>
+
+<p>Each node is in one of three states:</p>
+<ul>
+  <li><strong>Leader</strong></li>
+  <li><strong>Follower</strong></li>
+  <li><strong>Candidate</strong></li>
+</ul>
+
+<p>At any time:</p>
+<ul>
+  <li>At most one leader exists</li>
+  <li>All writes go through the leader</li>
+</ul>
+
+<hr />
+
+<h2 id="leader-election-in-raft">Leader Election in Raft</h2>
+
+<ol>
+  <li>Followers start an election if they stop hearing from the leader</li>
+  <li>They become candidates and request votes</li>
+  <li>A candidate with a majority becomes leader</li>
+</ol>
+
+<p>Randomized timeouts reduce split votes.</p>
+
+<hr />
+
+<h2 id="log-replication-in-raft">Log Replication in Raft</h2>
+
+<ol>
+  <li>Leader appends entries to its log</li>
+  <li>Entries are replicated to followers</li>
+  <li>Once a majority acknowledges, entries are <strong>committed</strong></li>
+  <li>Nodes apply entries to their state machines</li>
+</ol>
+
+<hr />
+
+<h2 id="safety-guarantees-in-raft">Safety Guarantees in Raft</h2>
+
+<p>Raft ensures:</p>
+<ul>
+  <li>Logs remain consistent across leaders</li>
+  <li>Committed entries are never lost</li>
+  <li>Leaders cannot overwrite committed entries</li>
+</ul>
+
+<p>This provides <strong>linearizable writes</strong>.</p>
+
+<hr />
+
+<h2 id="quorums-the-key-insight">Quorums: The Key Insight</h2>
+
+<p>Most consensus algorithms rely on <strong>majorities</strong>.</p>
+
+<p>A quorum is typically:
+[N/2] + 1</p>
+
+<p>Why it works:</p>
+<ul>
+  <li>Any two quorums intersect</li>
+  <li>At least one node always has the latest committed state</li>
+</ul>
+
+<hr />
+
+<h2 id="consensus-vs-replication">Consensus vs Replication</h2>
+
+<ul>
+  <li><strong>Replication</strong> copies data</li>
+  <li><strong>Consensus</strong> decides <em>what</em> to replicate and <em>in what order</em></li>
+</ul>
+
+<p>Strong consistency requires consensus.</p>
+
+<hr />
+
+<h2 id="performance-tradeoffs">Performance Tradeoffs</h2>
+
+<p>Consensus introduces several performance costs that systems must account for.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Impact of Consensus</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Latency</strong></td>
+      <td>Requires multiple network round trips for each write</td>
+    </tr>
+    <tr>
+      <td><strong>Throughput</strong></td>
+      <td>Leader can become a bottleneck, limiting parallelism</td>
+    </tr>
+    <tr>
+      <td><strong>Availability</strong></td>
+      <td>A majority of nodes must be reachable; progress can halt during network partitions</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>As a result, many systems restrict the use of consensus to <strong>metadata and control planes</strong> rather than high-volume data paths.</p>
+
+<hr />
+
+<h2 id="real-world-use-cases">Real-World Use Cases</h2>
+
+<p>Consensus is commonly used for:</p>
+<ul>
+  <li>Leader election</li>
+  <li>Configuration management</li>
+  <li>Metadata replication</li>
+  <li>Distributed locks</li>
+  <li>Cluster membership</li>
+</ul>
+
+<p>Examples:</p>
+<ul>
+  <li>Kubernetes (etcd)</li>
+  <li>CockroachDB</li>
+  <li>Consul</li>
+  <li>ZooKeeper</li>
+</ul>
+
+<hr />
+
+<h2 id="when-not-to-use-consensus">When Not to Use Consensus</h2>
+
+<p>Avoid consensus when:</p>
+<ul>
+  <li>Eventual consistency is acceptable</li>
+  <li>Latency is critical</li>
+  <li>Workloads are high-volume and write-heavy</li>
+</ul>
+
+<p>Examples:</p>
+<ul>
+  <li>Caches</li>
+  <li>Metrics pipelines</li>
+  <li>Log ingestion systems</li>
+</ul>
+
+<hr />
+
+<h2 id="final-thoughts">Final Thoughts</h2>
+
+<p>Consensus algorithms are the <strong>foundation of reliable distributed systems</strong>. They allow systems to function predictably in the face of failures—but they are not free.</p>
+
+<p>A strong engineer understands:</p>
+<ul>
+  <li>How consensus works</li>
+  <li>What guarantees it provides</li>
+  <li>When its tradeoffs are worth paying</li>
+</ul>
+
+<blockquote>
+  <p>Distributed systems fail by default. Consensus is how we agree on what happens next.</p>
+</blockquote>
+
+
+</article>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Shubham Jain</p>
+  
+      <nav class="footer-links">
+        <a href="/blog/about">About</a>
+        <a href="https://www.linkedin.com/in/shubham-jain2310/">LinkedIn</a>
+        <a href="https://github.com/jainshubham23">GitHub</a>
+      </nav>
+  
+      <p class="footer-meta">
+        © 2025 · Built with love
+      </p>
+    </div>
+  </footer>
+  
+
+</body>
+</html>
