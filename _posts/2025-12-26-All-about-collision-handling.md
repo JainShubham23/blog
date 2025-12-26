@@ -7,7 +7,7 @@ tags: [system-design]
 
 Hash tables are one of the most widely used data structures in computer science because they offer near constant-time lookup, insertion, and deletion. However, their performance relies heavily on how **collisions** are handled—situations where multiple keys map to the same index in the underlying array.
 
-This article explains the **first seven fundamental collision handling techniques**, how they work, and where each one fits in real-world systems.
+This article explains the techniques, how they work, and where each one fits in real-world systems.
 
 ---
 
