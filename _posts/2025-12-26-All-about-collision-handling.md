@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Understanding Hash Table Collision Handling, The First Seven Techniques Explained
+title: Understanding Hash Table Collision Handling
 date: 2025-12-26
 tags: [system-design]
 ---
